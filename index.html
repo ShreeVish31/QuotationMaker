@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>QuotationMaker - Fast & Professional Quotation Creator</title>
+  
+  <!-- PWA Meta & Manifest -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1e40af">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/png" href="./icon-192.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Export Libraries (jspdf and html2canvas) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./style.css?v=11">
+</head>
+<body class="theme-light view-mode-edit">
+
+  <!-- ============================================== -->
+  <!-- APP HEADER (DESKTOP & MOBILE RESPONSIVE) -->
+  <!-- ============================================== -->
+  <header class="app-header">
+    
+    <!-- Top Row: Brand, Desktop Tabs, and Header Actions -->
+    <div class="header-main-row">
+      
+      <!-- Brand Logo & Name -->
+      <div class="brand-group">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1 class="brand-title">QuotationMaker</h1>
+          <span class="brand-subtitle">Create, Customize & Export in Seconds</span>
+        </div>
+      </div>
+
+      <!-- DESKTOP NAVIGATION TABS (Visible only on Laptop/Desktop) -->
+      <nav class="desktop-nav">
+        <button class="desk-nav-btn active" id="deskTabEditor" onclick="switchMainTab('editor')">
+          <span class="btn-icon">✏️</span> Editor
+        </button>
+        <button class="desk-nav-btn" id="deskTabSaved" onclick="switchMainTab('saved')">
+          <span class="btn-icon">📂</span> Saved Quotes <span class="desk-badge" id="deskSavedCount">0</span>
+        </button>
+        <button class="desk-nav-btn" id="deskTabProfile" onclick="switchMainTab('profile')">
+          <span class="btn-icon">🏢</span> Business Info
+        </button>
+      </nav>
+
+      <!-- Header Actions (New Quote + Theme Toggle) -->
+      <div class="header-actions">
+        <button class="btn-new-quote" onclick="createNewQuotation()" title="New Quotation">
+          <span>➕</span> <span class="hide-mobile">New Quote</span>
+        </button>
+        <button class="btn-theme-toggle" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle Theme">
+          🌙
+        </button>
+      </div>
+
+    </div>
+
+    <!-- MOBILE STICKY NAVIGATION (Visible only on Mobile & Tablet <= 960px) -->
+    <nav class="mobile-sticky-nav">
+      <button class="mob-tab-btn active" id="mobTabEdit" onclick="setMobileMode('edit')">
+        <span>✏️</span> Edit
+      </button>
+      <button class="mob-tab-btn" id="mobTabPreview" onclick="setMobileMode('preview')">
+        <span>👁️</span> Preview
+      </button>
+      <button class="mob-tab-btn" id="mobTabSaved" onclick="switchMainTab('saved')">
+        <span>📂</span> Saved (<span id="mobSavedCount">0</span>)
+      </button>
+      <button class="mob-tab-btn" id="mobTabProfile" onclick="switchMainTab('profile')">
+        <span>🏢</span> Profile
+      </button>
+    </nav>
+
+  </header>
+
+  <!-- ============================================== -->
+  <!-- MAIN APPLICATION CONTAINER -->
+  <!-- ============================================== -->
+  <main class="app-main">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: EDITOR & LIVE PREVIEW -->
+    <!-- ========================================== -->
+    <div id="viewEditor" class="main-tab-view active">
+      <div class="editor-workspace">
+        
+        <!-- ---------------------------------------- -->
+        <!-- PANE A: FORM CONTROLS (LEFT COLUMN ON LAPTOP) -->
+        <!-- ---------------------------------------- -->
+        <div class="form-pane" id="formPane">
+
+          <!-- Sample Loader Bar -->
+          <div class="sample-bar">
+            <span class="sample-title">Template: <strong>Virendra Vishwakarma</strong></span>
+            <div class="sample-actions">
+              <button type="button" class="btn-pill" onclick="loadDefaultTemplate()">Load Sample</button>
+              <button type="button" class="btn-pill btn-pill-danger" onclick="clearQuotationData()">Clear</button>
+            </div>
+          </div>
+
+          <!-- SECTION 1: BUSINESS HEADER -->
+          <div class="form-card">
+            <div class="card-head" onclick="toggleAccordion(this)">
+              <div class="card-title">
+                <span class="card-icon">🏢</span>
+                <span>Business & Contact Header</span>
+              </div>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="card-content">
+              <div class="input-group">
+                <label for="inputBusinessName">Business / Contractor Name <span class="req">*</span></label>
+                <input type="text" id="inputBusinessName" class="form-input" placeholder="e.g. Virendra Vishwakarma" oninput="handleInputChange()">
+                <small class="hint">Shown centered, bold & underlined on the quotation</small>
+              </div>
+
+              <div class="input-group">
+                <label for="inputAddress">Address / Location</label>
+                <textarea id="inputAddress" rows="2" class="form-input" placeholder="e.g. Siddhivinayak CHS, Singh Estate, Road No.1, Samta Nagar, Kandivali East, Mumbai - 400101." oninput="handleInputChange()"></textarea>
+              </div>
+
+              <div class="row-2">
+                <div class="input-group">
+                  <label for="inputMobile">Mobile No. <span class="req">*</span></label>
+                  <input type="tel" id="inputMobile" class="form-input" placeholder="e.g. 9082356335" oninput="handleInputChange()">
+                </div>
+                <div class="input-group">
+                  <label for="inputDate">Date</label>
+                  <input type="date" id="inputDate" class="form-input" oninput="handleInputChange()">
+                </div>
+              </div>
+
+              <!-- Client Info Toggle -->
+              <div class="toggle-option-row">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="checkShowClient" onchange="toggleClientFields()">
+                  <span class="slider"></span>
+                  <span class="toggle-label">Include Client / Site Name</span>
+                </label>
+              </div>
+
+              <div id="clientFieldsContainer" class="client-box hidden">
+                <div class="row-2">
+                  <div class="input-group">
+                    <label for="inputClientName">Client Name</label>
+                    <input type="text" id="inputClientName" class="form-input" placeholder="e.g. Mr. Sharma" oninput="handleInputChange()">
+                  </div>
+                  <div class="input-group">
+                    <label for="inputClientPhone">Client Mobile (WhatsApp)</label>
+                    <input type="tel" id="inputClientPhone" class="form-input" placeholder="e.g. 9876543210" oninput="handleInputChange()">
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="inputClientAddress">Site Address</label>
+                  <input type="text" id="inputClientAddress" class="form-input" placeholder="e.g. Flat 301, Silver Sands" oninput="handleInputChange()">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: SUBJECT -->
+          <div class="form-card">
+            <div class="card-head" onclick="toggleAccordion(this)">
+              <div class="card-title">
+                <span class="card-icon">📌</span>
+                <span>Quotation Subject</span>
+              </div>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="card-content">
+              <div class="input-group">
+                <label for="inputSubject">Subject Line <span class="req">*</span></label>
+                <input type="text" id="inputSubject" class="form-input font-bold" placeholder="e.g. Door Shutter Fixing with Fixtures." oninput="handleInputChange()">
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: ITEMS TABLE -->
+          <div class="form-card">
+            <div class="card-head" onclick="toggleAccordion(this)">
+              <div class="card-title">
+                <span class="card-icon">📋</span>
+                <span>Quotation Details (Items & Rates)</span>
+              </div>
+              <span class="item-count-chip" id="itemCountBadge">6 Items</span>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="card-content">
+
+              <!-- Mode Switcher -->
+              <div class="mode-toggle-bar">
+                <span class="mode-label">Mode:</span>
+                <div class="mode-pills">
+                  <button type="button" class="mode-pill active" id="btnModeStandard" onclick="setTableMode('standard')">Standard Rate</button>
+                  <button type="button" class="mode-pill" id="btnModeCalculated" onclick="setTableMode('calculated')">Qty × Rate (Auto Total)</button>
+                </div>
+              </div>
+
+              <!-- ITEMS LIST -->
+              <div id="itemsContainer" class="items-list-container">
+                <!-- Dynamically populated via app.js -->
+              </div>
+
+              <!-- ADD ITEM BUTTON -->
+              <div class="add-item-wrap">
+                <button type="button" class="btn-add-item" onclick="addNewItem()">
+                  <span>➕ Add Item</span>
+                </button>
+              </div>
+
+              <!-- PRESETS -->
+              <div class="presets-wrap">
+                <span class="presets-heading">⚡ Quick Presets:</span>
+                <div class="chips-flex">
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Main Door', '1800')">+ Main Door</button>
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Bed Room Door', '1500')">+ Bed Room Door</button>
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Toilet Door', '1000')">+ Toilet Door</button>
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Staircase Door', '2200')">+ Staircase Door</button>
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Molding Patti Fixing', '15 fit')">+ Molding Patti</button>
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Frame & Door Dhar Polish', '1500')">+ Dhar Polish</button>
+                  <button type="button" class="chip-btn" onclick="quickAddItem('Door Handle & Lock Fitting', '350')">+ Lock Fitting</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SECTION 4: TERMS AND CONDITIONS -->
+          <div class="form-card">
+            <div class="card-head" onclick="toggleAccordion(this)">
+              <div class="card-title">
+                <span class="card-icon">📜</span>
+                <span>Terms and Conditions</span>
+              </div>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="card-content">
+              <div id="termsContainer" class="terms-list-container">
+                <!-- Dynamically populated via app.js -->
+              </div>
+
+              <div class="add-term-wrap">
+                <button type="button" class="btn-pill" onclick="addNewTerm()">➕ Add Condition</button>
+              </div>
+
+              <div class="presets-wrap">
+                <span class="presets-heading">⚡ Quick Terms:</span>
+                <div class="chips-flex">
+                  <button type="button" class="chip-btn" onclick="quickAddTerm('Payment terms: Done in 15 days.')">+ Done in 15 days</button>
+                  <button type="button" class="chip-btn" onclick="quickAddTerm('50% advance payment with work order, balance on completion.')">+ 50% Advance</button>
+                  <button type="button" class="chip-btn" onclick="quickAddTerm('Quotation validity is 30 days from date of issue.')">+ 30 Days Validity</button>
+                  <button type="button" class="chip-btn" onclick="quickAddTerm('Material will be supplied by client at site.')">+ Material by Client</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 5: OPTIONS -->
+          <div class="form-card">
+            <div class="card-head" onclick="toggleAccordion(this)">
+              <div class="card-title">
+                <span class="card-icon">⚙️</span>
+                <span>Display & Signatory</span>
+              </div>
+              <span class="acc-chevron">▼</span>
+            </div>
+            <div class="card-content">
+              <div class="checkbox-stack">
+                <label class="check-item">
+                  <input type="checkbox" id="checkOuterBorder" checked onchange="toggleOuterBorder()">
+                  <span>Outer Document Border Frame (Matches Reference Format)</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="checkShowTotalRow" checked onchange="toggleTotalRow()">
+                  <span>Show Total Summary Row</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="checkShowSignatory" checked onchange="toggleSignatory()">
+                  <span>Show Authorized Signatory</span>
+                </label>
+              </div>
+
+              <div class="input-group" style="margin-top: 14px;">
+                <label for="inputSignatoryName">Signatory / Contractor Name</label>
+                <input type="text" id="inputSignatoryName" class="form-input" placeholder="e.g. Virendra Vishwakarma" oninput="handleInputChange()">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ---------------------------------------- -->
+        <!-- PANE B: LIVE PREVIEW & EXPORT (RIGHT COLUMN ON LAPTOP) -->
+        <!-- ---------------------------------------- -->
+        <div class="preview-pane" id="previewPane">
+
+          <!-- Minimal Export Toolbar (Always visible above sheet) -->
+          <div class="export-toolbar-box">
+            <div class="toolbar-label">
+              <span class="pulse-dot"></span>
+              <span>Quotation Sheet</span>
+            </div>
+
+            <div class="toolbar-action-group">
+              <button type="button" class="btn-tool btn-tool-pdf" onclick="exportQuotationPDF()" title="Download PDF">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <path d="M12 18v-6"></path>
+                  <path d="m9 15 3 3 3-3"></path>
+                </svg>
+                <span>PDF</span>
+              </button>
+
+              <button type="button" class="btn-tool btn-tool-img" onclick="exportQuotationImage()" title="Download High-Res Image (PNG)">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <span>Image</span>
+              </button>
+
+              <button type="button" class="btn-tool btn-tool-wa" onclick="shareOnWhatsApp()" title="Share WhatsApp">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>WhatsApp</span>
+              </button>
+
+              <button type="button" class="btn-tool btn-tool-print" onclick="printQuotation()" title="Print">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                <span>Print</span>
+              </button>
+
+              <button type="button" class="btn-tool btn-tool-save" onclick="saveCurrentQuotation()" title="Save">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- DOCUMENT VIEWER WRAPPER -->
+          <div class="sheet-scroller">
+            <div class="sheet-scaler">
+              
+              <!-- THE QUOTATION SHEET -->
+              <div id="quotationPaper" class="quotation-paper with-border">
+                
+                <!-- HEADER: BUSINESS NAME (UNDERLINED BOLD) -->
+                <div class="doc-header">
+                  <h1 id="docBusinessName" class="doc-business-name" contenteditable="true" onblur="handleDirectEdit('businessName', this.innerText)">
+                    Virendra Vishwakarma
+                  </h1>
+
+                  <!-- ADDRESS -->
+                  <p id="docAddress" class="doc-address" contenteditable="true" onblur="handleDirectEdit('businessAddress', this.innerText)">
+                    Siddhivinayak CHS, Singh Estate, Road No.1, Samta Nagar, Kandivali East, Mumbai - 400101.
+                  </p>
+
+                  <!-- CONTACT INFO (RIGHT ALIGNED) -->
+                  <div class="doc-contact-row">
+                    <span id="docMobileContainer" class="doc-mobile">
+                      <strong>Mobile No.</strong> <span id="docMobile" contenteditable="true" onblur="handleDirectEdit('mobile', this.innerText)">9082356335</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- CLIENT / DATE ROW -->
+                <div id="docClientMetaRow" class="doc-client-meta hidden">
+                  <div class="meta-left">
+                    <span><strong>To:</strong> <span id="docClientName">Mr. Client</span></span>
+                    <span id="docClientSite"></span>
+                  </div>
+                  <div class="meta-right">
+                    <span><strong>Date:</strong> <span id="docDate"></span></span>
+                  </div>
+                </div>
+
+                <!-- SUBJECT (CENTERED BOLD) -->
+                <div class="doc-subject-wrapper">
+                  <h3 class="doc-subject">
+                    <strong>Subject:</strong> <span id="docSubject" contenteditable="true" onblur="handleDirectEdit('subject', this.innerText)">Door Shutter Fixing with Fixtures.</span>
+                  </h3>
+                </div>
+
+                <!-- SECTION TITLE -->
+                <div class="doc-section-title">
+                  <h2>Quotation Details</h2>
+                </div>
+
+                <!-- TABLE OF DETAILS -->
+                <div class="doc-table-wrapper">
+                  <table id="docTable" class="doc-table">
+                    <thead>
+                      <tr id="docTableHeadRow">
+                        <th class="col-sr">Sr. No.</th>
+                        <th class="col-desc">Item Description</th>
+                        <th class="col-rate" id="docColRateTitle">Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody id="docTableBody">
+                      <!-- Rendered by app.js -->
+                    </tbody>
+                    <tfoot id="docTableFoot">
+                      <!-- Total rendered if active -->
+                    </tfoot>
+                  </table>
+                </div>
+
+                <!-- TERMS AND CONDITIONS SECTION -->
+                <div class="doc-terms-section">
+                  <h2 class="terms-title">Terms and Conditions</h2>
+                  <ol id="docTermsList" class="terms-list-doc">
+                    <!-- Rendered by app.js -->
+                  </ol>
+                </div>
+
+                <!-- SIGNATORY -->
+                <div id="docSignatorySection" class="doc-signatory-section">
+                  <div class="signatory-box">
+                    <div class="sign-line"></div>
+                    <p class="signatory-name" id="docSignatoryName">Virendra Vishwakarma</p>
+                    <p class="signatory-sub">Authorized Signatory</p>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: SAVED QUOTATIONS -->
+    <!-- ========================================== -->
+    <div id="viewSaved" class="main-tab-view">
+      <div class="content-container">
+        
+        <div class="page-head-row">
+          <div>
+            <h2 class="page-title">Saved Quotations</h2>
+            <p class="page-desc">Your past quotations stored locally on this device</p>
+          </div>
+          <div class="page-head-actions">
+            <button class="btn-pill" onclick="exportDataBackup()">⬇️ Backup All</button>
+            <label class="btn-pill">
+              ⬆️ Restore <input type="file" id="importBackupInput" accept=".json" style="display:none;" onchange="importDataBackup(event)">
+            </label>
+            <button class="btn-pill btn-pill-primary" onclick="createNewQuotation()">➕ New Quote</button>
+          </div>
+        </div>
+
+        <div class="search-wrap">
+          <input type="text" id="savedSearchInput" class="form-input" placeholder="🔍 Search quotations by subject, client or date..." oninput="filterSavedQuotations()">
+        </div>
+
+        <div id="savedQuotationsList" class="saved-cards-grid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+        <div id="savedEmptyState" class="empty-box hidden">
+          <div class="empty-emoji">📂</div>
+          <h3>No Saved Quotations</h3>
+          <p>Create a quotation and tap "Save" to access it here anytime.</p>
+          <button class="btn-pill btn-pill-primary" onclick="switchMainTab('editor')">Go to Editor</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: BUSINESS PROFILE -->
+    <!-- ========================================== -->
+    <div id="viewProfile" class="main-tab-view">
+      <div class="content-container">
+        
+        <div class="page-head-row">
+          <div>
+            <h2 class="page-title">Business Profile</h2>
+            <p class="page-desc">Set your default details so new quotations start ready</p>
+          </div>
+        </div>
+
+        <div class="profile-card-box">
+          <form onsubmit="handleSaveProfile(event)">
+            
+            <div class="input-group">
+              <label for="profBusinessName">Business / Contractor Name <span class="req">*</span></label>
+              <input type="text" id="profBusinessName" class="form-input" placeholder="e.g. Virendra Vishwakarma" required>
+            </div>
+
+            <div class="input-group">
+              <label for="profAddress">Address / Location</label>
+              <textarea id="profAddress" rows="2" class="form-input" placeholder="e.g. Siddhivinayak CHS, Singh Estate, Road No.1, Samta Nagar, Kandivali East, Mumbai - 400101."></textarea>
+            </div>
+
+            <div class="row-2">
+              <div class="input-group">
+                <label for="profMobile">Primary Mobile No. <span class="req">*</span></label>
+                <input type="tel" id="profMobile" class="form-input" placeholder="e.g. 9082356335" required>
+              </div>
+              <div class="input-group">
+                <label for="profAltMobile">Alternate Contact / Email</label>
+                <input type="text" id="profAltMobile" class="form-input" placeholder="e.g. 9876543210 or email">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="profDefaultTerms">Default Terms & Conditions (One per line)</label>
+              <textarea id="profDefaultTerms" rows="4" class="form-input" placeholder="Payment terms: Done in 15 days.&#10;50% advance with work order."></textarea>
+            </div>
+
+            <div class="profile-submit-row">
+              <button type="submit" class="btn-pill btn-pill-primary">💾 Save Default Profile</button>
+              <button type="button" class="btn-pill" onclick="applyProfileToCurrent()">Apply to Current Quotation</button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- FLOATING QUICK TOGGLE (MOBILE ONLY) -->
+  <!-- ============================================== -->
+  <button class="floating-quick-toggle" id="floatingToggleBtn" onclick="toggleMobileEditPreview()">
+    <span id="floatingToggleIcon">👁️</span>
+    <span id="floatingToggleText">Preview Quote</span>
+  </button>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- SCRIPTS (versioned to prevent stale cache execution) -->
+  <script src="./export.js?v=11"></script>
+  <script src="./app.js?v=11"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => {
+            console.log('PWA ServiceWorker ready:', reg.scope);
+            reg.update();
+          })
+          .catch(err => console.log('PWA SW error:', err));
+      });
+    }
+  </script>
+</body>
+</html>
