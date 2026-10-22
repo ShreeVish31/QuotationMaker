@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+
+    <!-- Document Shadow -->
+    <filter id="docShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.38" />
+    </filter>
+
+    <!-- Badge Shadow -->
+    <filter id="badgeShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0284c7" flood-opacity="0.45" />
+    </filter>
+
+    <!-- Pen Shadow -->
+    <filter id="penShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="4" dy="8" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.35" />
+    </filter>
+
+    <!-- Gold Badge Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Emerald Badge Gradient -->
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <!-- Pen Gradient -->
+    <linearGradient id="penGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Document Fold Gradient -->
+    <linearGradient id="foldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bgGrad)" />
+
+  <!-- Subtle Rim Glow -->
+  <rect x="18" y="18" width="476" height="476" rx="106" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.25" />
+
+  <!-- Ambient Light Reflection -->
+  <path d="M 32 120 C 32 70, 70 32, 120 32 L 392 32 C 410 32, 426 37, 440 46 C 360 80, 200 120, 32 120 Z" fill="#ffffff" fill-opacity="0.12" />
+
+  <!-- Document Sheet (with folded top-right corner) -->
+  <g filter="url(#docShadow)">
+    <!-- Sheet Body -->
+    <path d="M 128 96 L 316 96 L 384 164 L 384 404 C 384 415.046 375.046 424 364 424 L 148 424 C 136.954 424 128 415.046 128 404 Z" fill="#ffffff" />
+
+    <!-- Corner Fold -->
+    <path d="M 316 96 L 316 148 C 316 156.837 323.163 164 332 164 L 384 164 Z" fill="url(#foldGrad)" />
+    <path d="M 316 96 L 384 164" stroke="#94a3b8" stroke-width="1.5" stroke-opacity="0.4" />
+  </g>
+
+  <!-- Document Content Lines / Quotation Structure -->
+  <!-- Header Bar -->
+  <rect x="164" y="136" width="130" height="12" rx="6" fill="#1e3a8a" />
+
+  <!-- Table Header Row -->
+  <rect x="164" y="180" width="184" height="22" rx="4" fill="#f1f5f9" />
+  <rect x="174" y="186" width="22" height="10" rx="3" fill="#64748b" />
+  <rect x="206" y="186" width="80" height="10" rx="3" fill="#64748b" />
+  <rect x="306" y="186" width="32" height="10" rx="3" fill="#64748b" />
+
+  <!-- Table Row 1 -->
+  <line x1="164" y1="216" x2="348" y2="216" stroke="#e2e8f0" stroke-width="1.5" />
+  <rect x="174" y="224" width="18" height="8" rx="2" fill="#94a3b8" />
+  <rect x="206" y="224" width="70" height="8" rx="2" fill="#475569" />
+  <rect x="306" y="224" width="30" height="8" rx="2" fill="#1e293b" />
+
+  <!-- Table Row 2 -->
+  <line x1="164" y1="244" x2="348" y2="244" stroke="#e2e8f0" stroke-width="1.5" />
+  <rect x="174" y="252" width="18" height="8" rx="2" fill="#94a3b8" />
+  <rect x="206" y="252" width="60" height="8" rx="2" fill="#475569" />
+  <rect x="306" y="252" width="26" height="8" rx="2" fill="#1e293b" />
+
+  <!-- Table Row 3 -->
+  <line x1="164" y1="272" x2="348" y2="272" stroke="#e2e8f0" stroke-width="1.5" />
+  <rect x="174" y="280" width="18" height="8" rx="2" fill="#94a3b8" />
+  <rect x="206" y="280" width="76" height="8" rx="2" fill="#475569" />
+  <rect x="306" y="280" width="32" height="8" rx="2" fill="#1e293b" />
+
+  <!-- Total Summary Bar -->
+  <rect x="164" y="302" width="184" height="26" rx="4" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1" />
+  <rect x="220" y="310" width="44" height="10" rx="3" fill="#1e40af" />
+  <rect x="294" y="308" width="44" height="14" rx="4" fill="#2563eb" />
+
+  <!-- Terms Lines -->
+  <rect x="164" y="348" width="80" height="7" rx="3" fill="#94a3b8" />
+  <rect x="164" y="362" width="140" height="6" rx="3" fill="#cbd5e1" />
+  <rect x="164" y="374" width="110" height="6" rx="3" fill="#cbd5e1" />
+
+  <!-- Stamp / Seal Badge in Bottom Right (Emerald Green Verified Seal) -->
+  <g filter="url(#badgeShadow)">
+    <circle cx="330" cy="380" r="38" fill="url(#emeraldGrad)" />
+    <circle cx="330" cy="380" r="33" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="4 2" />
+    
+    <!-- Bold Rupee Symbol ₹ in Badge -->
+    <path d="M 322 367 L 338 367 M 322 373 L 338 373 M 325 367 L 325 377 C 325 382 334 382 334 382 L 338 393 M 329 382 L 323 393" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+
+  <!-- Modern Stylus / Pen in Top Right Action Angle -->
+  <g filter="url(#penShadow)" transform="translate(372, 80) rotate(42)">
+    <!-- Pen Barrel -->
+    <rect x="-10" y="0" width="20" height="96" rx="5" fill="url(#penGrad)" />
+    <!-- Pen Clip -->
+    <rect x="6" y="16" width="4" height="42" rx="2" fill="#ffffff" fill-opacity="0.8" />
+    <!-- Pen Grip -->
+    <rect x="-10" y="70" width="20" height="26" fill="#b45309" rx="2" />
+    <line x1="-10" y1="78" x2="10" y2="78" stroke="#fef3c7" stroke-width="1.5" />
+    <line x1="-10" y1="86" x2="10" y2="86" stroke="#fef3c7" stroke-width="1.5" />
+    <!-- Pen Tip (Cone) -->
+    <polygon points="-10,96 10,96 0,118" fill="#e2e8f0" />
+    <!-- Nib Ball -->
+    <circle cx="0" cy="118" r="2" fill="#0f172a" />
+  </g>
+</svg>
